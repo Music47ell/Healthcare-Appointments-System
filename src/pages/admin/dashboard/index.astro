@@ -2,7 +2,7 @@
 import { supabase } from "@/lib/supabase";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Header from "@/components/admin/Header.astro";
-const { cookies, redirect } = Astro;
+const { cookies } = Astro;
 
 const accessToken = cookies.get("sb-access-token");
 const refreshToken = cookies.get("sb-refresh-token");
@@ -42,8 +42,6 @@ const { data: doctors } = await supabase
     .from("doctors")
     .select("*")
     .eq("approved", "PENDING");
-
-const email = data?.user?.email;
 ---
 
 <BaseLayout>
@@ -58,7 +56,7 @@ const email = data?.user?.email;
                                 <td class="px-4 py-2 border font-semibold"
                                     >Name:</td
                                 >
-                                <td class="px-4 py-2 border">{admin.name}</td>
+                                <td class="px-4 py-2 border">{admin?.name}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -83,17 +81,17 @@ const email = data?.user?.email;
                     </thead>
                     <tbody>
                         {
-                            doctors.map((doctor) => (
-                                <tr key={doctor.user_id}>
+                            doctors?.map((doctor) => (
+                                <tr>
                                     <td class="px-4 py-2 border">
-                                        {doctor.name}
+                                        {doctor?.name}
                                     </td>
                                     <td class="px-4 py-2 border">
-                                        {doctor.specialty}
+                                        {doctor?.specialty}
                                     </td>
                                     <td class="px-4 py-2 border">
                                         <a
-                                            href={`/admin/approve/profile/${doctor.user_id}`}
+                                            href={`/admin/approve/profile/${doctor?.user_id}`}
                                             class="text-blue-500"
                                         >
                                             Edit Profile
@@ -122,17 +120,17 @@ const email = data?.user?.email;
                     </thead>
                     <tbody>
                         {
-                            deniedDoctors.map((doctor) => (
-                                <tr key={doctor.user_id}>
+                            deniedDoctors?.map((doctor) => (
+                                <tr>
                                     <td class="px-4 py-2 border">
-                                        {doctor.name}
+                                        {doctor?.name}
                                     </td>
                                     <td class="px-4 py-2 border">
-                                        {doctor.specialty}
+                                        {doctor?.specialty}
                                     </td>
                                     <td class="px-4 py-2 border">
                                         <a
-                                            href={`/admin/approve/profile/${doctor.user_id}`}
+                                            href={`/admin/approve/profile/${doctor?.user_id}`}
                                             class="text-blue-500"
                                         >
                                             Edit Profile

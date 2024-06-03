@@ -5,7 +5,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
   const formData = await request.formData();
   const appointment_id = formData.get("appointment_id")?.toString();
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("appointments")
     .delete()
     .eq("id", appointment_id);

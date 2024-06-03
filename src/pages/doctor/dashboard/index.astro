@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Header from "@/components/doctor/Header.astro";
 
-const { cookies, redirect } = Astro;
+const { cookies } = Astro;
 
 const accessToken = cookies.get("sb-access-token");
 const refreshToken = cookies.get("sb-refresh-token");
@@ -45,7 +45,7 @@ const { data: patients } = await supabase.from("patients").select("*");
 <BaseLayout>
     <div class="container mx-auto px-4">
         <div class="container mx-auto">
-            <Header title="Doctor Dashboard" userId={doctor.user_id} />
+            <Header title="Doctor Dashboard" userId={doctor?.user_id} />
             <div class="mt-4">
                 <div class="mt-8">
                     <table class="w-full mt-4">
@@ -54,35 +54,36 @@ const { data: patients } = await supabase.from("patients").select("*");
                                 <td class="px-4 py-2 border font-semibold"
                                     >Name:</td
                                 >
-                                <td class="px-4 py-2 border">{doctor.name}</td>
+                                <td class="px-4 py-2 border">{doctor?.name}</td>
                             </tr>
                             <tr class="border bg-gray-200">
                                 <td class="px-4 py-2 border font-semibold"
                                     >Specialty:</td
                                 >
                                 <td class="px-4 py-2 border"
-                                    >{doctor.specialty}</td
+                                    >{doctor?.specialty}</td
                                 >
                             </tr>
                             <tr class="border bg-gray-100">
                                 <td class="px-4 py-2 border font-semibold"
                                     >Fees:</td
                                 >
-                                <td class="px-4 py-2 border">{doctor.fees}</td>
+                                <td class="px-4 py-2 border">{doctor?.fees}</td>
                             </tr>
                             <tr class="border bg-gray-200">
                                 <td class="px-4 py-2 border font-semibold"
                                     >Approved:</td
                                 >
                                 <td class="px-4 py-2 border"
-                                    >{doctor.approved}</td
+                                    >{doctor?.approved}</td
                                 >
                             </tr>
                             <tr class="border bg-gray-100">
                                 <td class="px-4 py-2 border font-semibold"
                                     >Status:</td
                                 >
-                                <td class="px-4 py-2 border">{doctor.status}</td
+                                <td class="px-4 py-2 border"
+                                    >{doctor?.status}</td
                                 >
                             </tr>
                         </tbody>
@@ -109,7 +110,7 @@ const { data: patients } = await supabase.from("patients").select("*");
                             </thead>
                             <tbody>
                                 {patientsAppointments.map((appointment) => {
-                                    var utcTime = new Date(appointment.time);
+                                    var utcTime = new Date(appointment?.time);
                                     var turkeyOffset = 3 * 60;
                                     var turkeyTime = new Date(
                                         utcTime.getTime() +
@@ -121,24 +122,24 @@ const { data: patients } = await supabase.from("patients").select("*");
                                         .slice(0, 19);
 
                                     return (
-                                        <tr key={appointment.id} class="border">
+                                        <tr class="border">
                                             <td class="px-4 py-2 border">
                                                 {
-                                                    patients.find(
+                                                    patients?.find(
                                                         (patient) =>
-                                                            patient.user_id ===
-                                                            appointment.patient_id,
+                                                            patient?.user_id ===
+                                                            appointment?.patient_id,
                                                     )?.name
                                                 }
                                             </td>
                                             <td class="px-4 py-2 border">
-                                                {appointment.purpose}
+                                                {appointment?.purpose}
                                             </td>
                                             <td class="px-4 py-2 border">
                                                 {formattedTime}
                                             </td>
                                             <td class="px-4 py-2 border">
-                                                {appointment.status}
+                                                {appointment?.status}
                                             </td>
                                         </tr>
                                     );

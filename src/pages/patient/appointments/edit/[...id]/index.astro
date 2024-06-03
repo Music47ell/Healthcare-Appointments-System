@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Header from "@/components/patient/Header.astro";
 
-const { cookies, redirect } = Astro;
+const { cookies } = Astro;
 const { id } = Astro.params;
 
 const accessToken = cookies.get("sb-access-token");
@@ -29,7 +29,7 @@ if (error) {
     return redirect("/");
 }
 
-const { data: appintmentData, error: appointmentError } = await supabase
+const { data: appintmentData } = await supabase
     .from("appointments")
     .select()
     .eq("id", id)

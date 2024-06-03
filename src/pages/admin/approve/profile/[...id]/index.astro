@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Header from "@/components/admin/Header.astro";
 
-const { cookies, redirect } = Astro;
+const { cookies } = Astro;
 const { id } = Astro.params;
 
 const accessToken = cookies.get("sb-access-token");
@@ -13,7 +13,7 @@ if (!accessToken || !refreshToken) {
     return redirect("/");
 }
 
-const { data, error } = await supabase.auth.setSession({
+const { error } = await supabase.auth.setSession({
     refresh_token: refreshToken.value,
     access_token: accessToken.value,
 });
@@ -37,7 +37,6 @@ const { data: doctor } = await supabase
 
 const user_id = doctor?.user_id || "";
 const name = doctor?.name || "";
-const approve = doctor?.approved || false;
 ---
 
 <BaseLayout>

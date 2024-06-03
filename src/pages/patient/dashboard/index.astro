@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Header from "@/components/patient/Header.astro";
 
-const { cookies, redirect } = Astro;
+const { cookies } = Astro;
 
 const accessToken = cookies.get("sb-access-token");
 const refreshToken = cookies.get("sb-refresh-token");
@@ -39,9 +39,7 @@ const { data: patientsAppointments, error: appointmentsError } = await supabase
     .select("*")
     .eq("patient_id", data?.user?.id);
 
-const { data: doctorsData, error: doctorsError } = await supabase
-    .from("doctors")
-    .select("*");
+const { data: doctorsData } = await supabase.from("doctors").select("*");
 ---
 
 <BaseLayout>
@@ -54,20 +52,20 @@ const { data: doctorsData, error: doctorsError } = await supabase
                         <tr class="border bg-gray-100">
                             <td class="px-4 py-2 border font-semibold">Name:</td
                             >
-                            <td class="px-4 py-2 border">{patient.name}</td>
+                            <td class="px-4 py-2 border">{patient?.name}</td>
                         </tr>
                         <tr class="border bg-gray-200">
                             <td class="px-4 py-2 border font-semibold"
                                 >Date of Birth:</td
                             >
-                            <td class="px-4 py-2 border">{patient.dob}</td>
+                            <td class="px-4 py-2 border">{patient?.dob}</td>
                         </tr>
                         <tr class="border bg-gray-100">
                             <td class="px-4 py-2 border font-semibold">Age:</td>
                             <td class="px-4 py-2 border">
                                 {
                                     new Date().getFullYear() -
-                                        new Date(patient.dob).getFullYear()
+                                        new Date(patient?.dob).getFullYear()
                                 }</td
                             >
                         </tr>
@@ -75,7 +73,7 @@ const { data: doctorsData, error: doctorsError } = await supabase
                             <td class="px-4 py-2 border font-semibold"
                                 >Gender:</td
                             >
-                            <td class="px-4 py-2 border">{patient.gender}</td>
+                            <td class="px-4 py-2 border">{patient?.gender}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -110,14 +108,14 @@ const { data: doctorsData, error: doctorsError } = await supabase
                                 </thead>
                                 <tbody>
                                     {patientsAppointments.map((appointment) => {
-                                        const doctor = doctorsData.find(
+                                        const doctor = doctorsData?.find(
                                             (doctor) =>
-                                                doctor.user_id ===
-                                                appointment.doctor_id,
+                                                doctor?.user_id ===
+                                                appointment?.doctor_id,
                                         );
 
                                         var utcTime = new Date(
-                                            appointment.time,
+                                            appointment?.time,
                                         );
                                         var turkeyOffset = 3 * 60;
                                         var turkeyTime = new Date(
@@ -130,28 +128,25 @@ const { data: doctorsData, error: doctorsError } = await supabase
                                             .slice(0, 19);
 
                                         return (
-                                            <tr
-                                                key={appointment.id}
-                                                class="border"
-                                            >
+                                            <tr class="border">
                                                 <td class="px-4 py-2 border">
-                                                    {doctor.name}
+                                                    {doctor?.name}
                                                 </td>
                                                 <td class="px-4 py-2 border">
-                                                    {doctor.specialty}
+                                                    {doctor?.specialty}
                                                 </td>
                                                 <td class="px-4 py-2 border">
-                                                    {appointment.purpose}
+                                                    {appointment?.purpose}
                                                 </td>
                                                 <td class="px-4 py-2 border">
                                                     {formattedTime}
                                                 </td>
                                                 <td class="px-4 py-2 border">
-                                                    {appointment.status}
+                                                    {appointment?.status}
                                                 </td>
                                                 <td class="px-4 py-2 border">
                                                     <a
-                                                        href={`/patient/appointments/edit/${appointment.id}`}
+                                                        href={`/patient/appointments/edit/${appointment?.id}`}
                                                         class="text-blue-500"
                                                     >
                                                         Edit
@@ -166,7 +161,7 @@ const { data: doctorsData, error: doctorsError } = await supabase
                                                             type="hidden"
                                                             name="appointment_id"
                                                             value={
-                                                                appointment.id
+                                                                appointment?.id
                                                             }
                                                         />
                                                         <button

@@ -2,7 +2,7 @@
 import { supabase } from "@/lib/supabase";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Header from "@/components/patient/Header.astro";
-const { cookies, redirect } = Astro;
+const { cookies } = Astro;
 
 const accessToken = cookies.get("sb-access-token");
 const refreshToken = cookies.get("sb-refresh-token");
@@ -32,18 +32,15 @@ async function fetchAvailableDoctors() {
         const { data, error } = await supabase
             .from("doctors")
             .select()
-            .eq("approved", "APPROVED") // Fetch only approved doctors
-            .eq("status", "ONLINE"); // Fetch only online doctors
+            .eq("approved", "APPROVED")
+            .eq("status", "ONLINE");
 
         if (error) {
-            console.error("Error fetching available doctors:", error.message);
-            return;
+            return error;
         }
-
         return data;
-        console.log("List of available doctors:", data);
     } catch (error) {
-        console.error("Error fetching available doctors:", error.message);
+        return error;
     }
 }
 
@@ -82,7 +79,7 @@ const name = data?.user?.user_metadata?.name;
             >
                 {
                     doctors.map((doctor) => (
-                        <option key={doctor.id} value={doctor.user_id}>
+                        <option value={doctor.user_id}>
                             {doctor.name} - {doctor.fees} - {doctor.specialty}
                         </option>
                     ))

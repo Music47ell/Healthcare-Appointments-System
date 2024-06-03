@@ -10,7 +10,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     return new Response("Doctor are required", { status: 400 });
   }
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("doctors")
     .update({ approved: approved })
     .eq("user_id", doctor_id)
