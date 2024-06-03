@@ -8,7 +8,7 @@ export default defineConfig({
   site: "https://ksu-gp-has.news47ell.com",
   base: "/",
   trailingSlash: "never",
-  output: "hyprid",
+  output: "server",
   integrations: [tailwind()],
   adapter: cloudflare(),
 });
