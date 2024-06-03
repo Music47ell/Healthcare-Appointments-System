@@ -1,8 +1,6 @@
 import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
 
-import cloudflare from "@astrojs/cloudflare";
-
 // https://astro.build/config
 export default defineConfig({
   site: "https://ksu-gp-has.news47ell.com",
@@ -10,5 +8,4 @@ export default defineConfig({
   trailingSlash: "never",
   output: "static",
   integrations: [tailwind()],
-  adapter: cloudflare(),
 });
