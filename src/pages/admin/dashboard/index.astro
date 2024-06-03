@@ -1,0 +1,149 @@
+---
+import { supabase } from "@/lib/supabase";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Header from "@/components/admin/Header.astro";
+const { cookies, redirect } = Astro;
+
+const accessToken = cookies.get("sb-access-token");
+const refreshToken = cookies.get("sb-refresh-token");
+
+if (!accessToken || !refreshToken) {
+    return redirect("/");
+}
+
+const { data, error } = await supabase.auth.setSession({
+    refresh_token: refreshToken.value,
+    access_token: accessToken.value,
+});
+
+if (error) {
+    cookies.delete("sb-access-token", {
+        path: "/",
+    });
+    cookies.delete("sb-refresh-token", {
+        path: "/",
+    });
+
+    return redirect("/");
+}
+
+const { data: admin } = await supabase
+    .from("admins")
+    .select("user_id, name")
+    .eq("user_id", data?.user?.id)
+    .single();
+
+const { data: deniedDoctors } = await supabase
+    .from("doctors")
+    .select("*")
+    .eq("approved", "DENIED");
+
+const { data: doctors } = await supabase
+    .from("doctors")
+    .select("*")
+    .eq("approved", "PENDING");
+
+const email = data?.user?.email;
+---
+
+<BaseLayout>
+    <div class="container mx-auto px-4">
+        <div class="container mx-auto">
+            <Header title="Admin Dashboard" />
+            <div class="mt-4">
+                <div class="mt-8">
+                    <table class="w-full mt-4">
+                        <tbody>
+                            <tr class="border bg-gray-100">
+                                <td class="px-4 py-2 border font-semibold"
+                                    >Name:</td
+                                >
+                                <td class="px-4 py-2 border">{admin.name}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <hr class="my-4 border-t border-gray-300" />
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold mb-4">
+                    Doctors Waiting for Approval
+                </h2>
+                <table class="w-full mt-4">
+                    <thead>
+                        <tr class="border bg-gray-100">
+                            <th class="px-4 py-2 border font-semibold">Name</th>
+                            <th class="px-4 py-2 border font-semibold"
+                                >Speciality</th
+                            >
+                            <th class="px-4 py-2 border font-semibold"
+                                >Action</th
+                            >
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            doctors.map((doctor) => (
+                                <tr key={doctor.user_id}>
+                                    <td class="px-4 py-2 border">
+                                        {doctor.name}
+                                    </td>
+                                    <td class="px-4 py-2 border">
+                                        {doctor.specialty}
+                                    </td>
+                                    <td class="px-4 py-2 border">
+                                        <a
+                                            href={`/admin/approve/profile/${doctor.user_id}`}
+                                            class="text-blue-500"
+                                        >
+                                            Edit Profile
+                                        </a>
+                                    </td>
+                                </tr>
+                            ))
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <hr class="my-4 border-t border-gray-300" />
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold mb-4">Denied Doctors</h2>
+                <table class="w-full mt-4">
+                    <thead>
+                        <tr class="border bg-gray-100">
+                            <th class="px-4 py-2 border font-semibold">Name</th>
+                            <th class="px-4 py-2 border font-semibold"
+                                >Speciality</th
+                            >
+                            <th class="px-4 py-2 border font-semibold"
+                                >Action</th
+                            >
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            deniedDoctors.map((doctor) => (
+                                <tr key={doctor.user_id}>
+                                    <td class="px-4 py-2 border">
+                                        {doctor.name}
+                                    </td>
+                                    <td class="px-4 py-2 border">
+                                        {doctor.specialty}
+                                    </td>
+                                    <td class="px-4 py-2 border">
+                                        <a
+                                            href={`/admin/approve/profile/${doctor.user_id}`}
+                                            class="text-blue-500"
+                                        >
+                                            Edit Profile
+                                        </a>
+                                    </td>
+                                </tr>
+                            ))
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</BaseLayout>

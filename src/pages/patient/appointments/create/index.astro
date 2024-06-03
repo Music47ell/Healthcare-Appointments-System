@@ -1,0 +1,118 @@
+---
+import { supabase } from "@/lib/supabase";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Header from "@/components/patient/Header.astro";
+const { cookies, redirect } = Astro;
+
+const accessToken = cookies.get("sb-access-token");
+const refreshToken = cookies.get("sb-refresh-token");
+
+if (!accessToken || !refreshToken) {
+    return redirect("/");
+}
+
+const { data, error } = await supabase.auth.setSession({
+    refresh_token: refreshToken.value,
+    access_token: accessToken.value,
+});
+
+if (error) {
+    cookies.delete("sb-access-token", {
+        path: "/",
+    });
+    cookies.delete("sb-refresh-token", {
+        path: "/",
+    });
+
+    return redirect("/");
+}
+
+async function fetchAvailableDoctors() {
+    try {
+        const { data, error } = await supabase
+            .from("doctors")
+            .select()
+            .eq("approved", "APPROVED") // Fetch only approved doctors
+            .eq("status", "ONLINE"); // Fetch only online doctors
+
+        if (error) {
+            console.error("Error fetching available doctors:", error.message);
+            return;
+        }
+
+        return data;
+        console.log("List of available doctors:", data);
+    } catch (error) {
+        console.error("Error fetching available doctors:", error.message);
+    }
+}
+
+const doctors = await fetchAvailableDoctors();
+
+const name = data?.user?.user_metadata?.name;
+---
+
+<BaseLayout>
+    <div class="container mx-auto px-4">
+        <Header title="Schedule an Appointment" />
+        <form
+            id="appointmentForm"
+            action="/api/appointment/create"
+            method="post"
+        >
+            <input
+                type="hidden"
+                id="patientId"
+                name="patient_id"
+                value={data?.user?.id}
+            />
+            <label for="patientName" class="block">Patient Name:</label>
+            <input
+                type="text"
+                id="patientName"
+                value={name}
+                disabled
+                class="bg-gray-300 block border border-gray-300 rounded px-4 py-2 mt-2 w-full"
+            /><br />
+            <label for="doctors" class="block mt-4">Choose a Doctor:</label>
+            <select
+                id="doctors"
+                name="doctor_id"
+                class="block border border-gray-300 rounded px-4 py-2 mt-2 w-full"
+            >
+                {
+                    doctors.map((doctor) => (
+                        <option key={doctor.id} value={doctor.user_id}>
+                            {doctor.name} - {doctor.fees} - {doctor.specialty}
+                        </option>
+                    ))
+                }
+            </select><br />
+            <label for="time" class="block mt-4"
+                >Preferred Appointment Time:</label
+            >
+            <input
+                type="datetime-local"
+                id="time"
+                name="time"
+                required
+                class="block border border-gray-300 rounded px-4 py-2 mt-2 w-full"
+            /><br />
+
+            <label for="purpose" class="block mt-4">Appointment Purpose:</label>
+            <input
+                type="text"
+                id="purpose"
+                name="purpose"
+                required
+                class="block border border-gray-300 rounded px-4 py-2 mt-2 w-full"
+            /><br />
+
+            <button
+                type="submit"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                >Schedule Appointment</button
+            >
+        </form>
+    </div>
+</BaseLayout>
