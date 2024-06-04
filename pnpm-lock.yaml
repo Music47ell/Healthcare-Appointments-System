@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@astrojs/check':
-    specifier: ^0.5.9
-    version: 0.5.10(typescript@5.4.5)
+    specifier: ^0.7.0
+    version: 0.7.0(typescript@5.4.5)
   '@astrojs/cloudflare':
     specifier: ^10.2.6
     version: 10.2.6(astro@4.9.2)
@@ -18,7 +18,7 @@ dependencies:
     specifier: ^2.39.8
     version: 2.43.4
   astro:
-    specifier: ^4.5.5
+    specifier: ^4.9.2
     version: 4.9.2(typescript@5.4.5)
   tailwindcss:
     specifier: ^3.4.3
@@ -47,8 +47,8 @@ packages:
       '@jridgewell/trace-mapping': 0.3.25
     dev: false
 
-  /@astrojs/check@0.5.10(typescript@5.4.5):
-    resolution: {integrity: sha512-vliHXM9cu/viGeKiksUM4mXfO816ohWtawTl2ADPgTsd4nUMjFiyAl7xFZhF34yy4hq4qf7jvK1F2PlR3b5I5w==}
+  /@astrojs/check@0.7.0(typescript@5.4.5):
+    resolution: {integrity: sha512-UTqwOeKNu9IYZmJXEeWnQuTdSd/pX58Hl4TUARsMlT97SVDL//kLBE4T/ctxRz6J573N87oE5ddtW/uOOnQTug==}
     hasBin: true
     peerDependencies:
       typescript: ^5.0.0
