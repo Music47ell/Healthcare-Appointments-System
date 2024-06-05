@@ -40,7 +40,7 @@ const status = doctor?.status || "offline";
 ---
 
 <BaseLayout>
-    <div class="container mx-auto px-4">
+    <div class="flex-grow container mx-auto px-4">
         <Header title="Update Profile" />
         <form class="mt-4" action="/api/doctor/update" method="POST">
             <input type="hidden" name="doctor_id" value={user_id} />
